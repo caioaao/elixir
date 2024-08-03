@@ -2745,6 +2745,31 @@ defmodule Kernel do
   end
 
   @doc """
+  Same as `then/2` but accepts a condition `condition`.
+
+  If `condition` is truthy the behaviour will be the same as `then/2`. If it's falsey
+  then `value` is returned unchanged.
+
+  ### Examples
+
+      iex> 1 |> then(fn x -> x * 2 end, if: true)
+      2
+
+      iex> 1 |> then(fn x -> x * 2 end, if: false)
+      1
+  """
+  @doc since: "1.18.0"
+  defmacro then(value, fun, if: condition) do
+    quote do
+      if unquote(condition) do
+        unquote(fun).(unquote(value))
+      else
+        unquote(value)
+      end
+    end
+  end
+
+  @doc """
   Gets a value from a nested structure with nil-safe handling.
 
   Uses the `Access` module to traverse the structures
